@@ -113,98 +113,142 @@ function PortoSigningTest() {
     }
   }
 
+  const buttonStyle = {
+    padding: '10px 20px',
+    fontSize: '14px',
+    borderRadius: '4px',
+    border: '1px solid #333',
+    cursor: 'pointer',
+    fontFamily: 'monospace',
+    backgroundColor: '#1a1a1a',
+    color: '#fff',
+  }
+
   return (
-    <div style={{ padding: '20px', fontFamily: 'monospace' }}>
-      <h1>Porto Signing Bug Reproduction</h1>
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#0a0a0a',
+      color: '#ccc',
+      padding: '20px',
+      fontFamily: 'monospace'
+    }}>
+      <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <h1 style={{ fontSize: '24px', marginBottom: '8px', color: '#fff' }}>Porto Signing Bug Reproduction</h1>
+        <p style={{ color: '#666', marginBottom: '30px', fontSize: '14px' }}>signTypedDataAsync returns undefined</p>
 
-      <div style={{ marginBottom: '20px' }}>
-        <h2>Connection Status</h2>
-        <p>
-          <strong>Connected:</strong> {account.isConnected ? '✅ Yes' : '❌ No'}
-        </p>
-        {account.address && (
-          <>
-            <p>
-              <strong>Address:</strong> {account.address}
-            </p>
-            <p>
-              <strong>Chain ID:</strong> {account.chainId}
-            </p>
-            <p>
-              <strong>Chain Name:</strong> {account.chain?.name}
-            </p>
-          </>
-        )}
-      </div>
-
-      <div style={{ marginBottom: '20px' }}>
-        <h2>Actions</h2>
-        {!account.isConnected ? (
-          <button onClick={handleConnect} style={{ padding: '10px 20px', fontSize: '16px' }}>
-            Connect Porto Wallet
-          </button>
-        ) : (
-          <>
-            <button onClick={handleSign} style={{ padding: '10px 20px', fontSize: '16px', marginRight: '10px' }}>
-              Sign Message (EIP-712)
-            </button>
-            <button onClick={handleDisconnect} style={{ padding: '10px 20px', fontSize: '16px' }}>
-              Disconnect
-            </button>
-          </>
-        )}
-      </div>
-
-      <div style={{ marginTop: '20px' }}>
-        <h2>Logs</h2>
         <div style={{
-          backgroundColor: '#000',
-          color: '#0f0',
-          padding: '15px',
-          borderRadius: '5px',
-          maxHeight: '400px',
-          overflow: 'auto',
-          fontFamily: 'monospace',
-          fontSize: '12px'
+          backgroundColor: '#111',
+          padding: '20px',
+          borderRadius: '4px',
+          marginBottom: '20px',
+          border: '1px solid #222'
         }}>
-          {logs.length === 0 ? (
-            <p style={{ margin: 0 }}>No logs yet...</p>
-          ) : (
-            logs.map((log, index) => (
-              <div key={index} style={{ marginBottom: '5px' }}>
-                {log}
-              </div>
-            ))
+          <h2 style={{ fontSize: '16px', marginBottom: '12px', color: '#fff' }}>Connection Status</h2>
+          <p style={{ marginBottom: '6px', fontSize: '14px' }}>
+            <span style={{ color: '#666' }}>Connected:</span>{' '}
+            <span style={{ color: account.isConnected ? '#0f0' : '#f00' }}>
+              {account.isConnected ? 'Yes' : 'No'}
+            </span>
+          </p>
+          {account.address && (
+            <>
+              <p style={{ marginBottom: '6px', fontSize: '14px' }}>
+                <span style={{ color: '#666' }}>Address:</span>{' '}
+                <span style={{ color: '#fff' }}>{account.address}</span>
+              </p>
+              <p style={{ marginBottom: '6px', fontSize: '14px' }}>
+                <span style={{ color: '#666' }}>Chain ID:</span>{' '}
+                <span style={{ color: '#fff' }}>{account.chainId}</span>
+              </p>
+              <p style={{ marginBottom: '0', fontSize: '14px' }}>
+                <span style={{ color: '#666' }}>Chain:</span>{' '}
+                <span style={{ color: '#fff' }}>{account.chain?.name}</span>
+              </p>
+            </>
           )}
         </div>
-        {logs.length > 0 && (
-          <button onClick={() => setLogs([])} style={{ marginTop: '10px', padding: '5px 10px' }}>
-            Clear Logs
-          </button>
-        )}
-      </div>
 
-      <div style={{ marginTop: '30px', padding: '15px', backgroundColor: '#fff3cd', borderRadius: '5px' }}>
-        <h3>Expected Behavior:</h3>
-        <p>After clicking "Sign Message", the Porto UI should appear. After completing the signing flow with your passkey, the signature should be returned as a hex string.</p>
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            {!account.isConnected ? (
+              <button onClick={handleConnect} style={buttonStyle}>
+                Connect Porto Wallet
+              </button>
+            ) : (
+              <>
+                <button onClick={handleSign} style={buttonStyle}>
+                  Sign Message
+                </button>
+                <button onClick={handleDisconnect} style={buttonStyle}>
+                  Disconnect
+                </button>
+              </>
+            )}
+          </div>
+        </div>
 
-        <h3>Actual Behavior (Bug):</h3>
-        <p><strong>The signature returns as `undefined`</strong> even though:</p>
-        <ul>
-          <li>✅ Porto UI appears correctly</li>
-          <li>✅ User completes passkey authentication</li>
-          <li>✅ Porto UI shows success</li>
-          <li>✅ No errors are thrown</li>
-          <li>❌ Promise resolves with `undefined` instead of signature</li>
-        </ul>
+        <div style={{ marginBottom: '20px' }}>
+          <h2 style={{ fontSize: '16px', marginBottom: '12px', color: '#fff' }}>Logs</h2>
+          <div style={{
+            backgroundColor: '#000',
+            color: '#0f0',
+            padding: '15px',
+            borderRadius: '4px',
+            maxHeight: '400px',
+            overflow: 'auto',
+            fontFamily: 'monospace',
+            fontSize: '12px',
+            border: '1px solid #222'
+          }}>
+            {logs.length === 0 ? (
+              <p style={{ margin: 0, color: '#333' }}>No logs yet...</p>
+            ) : (
+              logs.map((log, index) => (
+                <div key={index} style={{ marginBottom: '5px' }}>
+                  {log}
+                </div>
+              ))
+            )}
+          </div>
+          {logs.length > 0 && (
+            <button onClick={() => setLogs([])} style={{ ...buttonStyle, marginTop: '10px' }}>
+              Clear Logs
+            </button>
+          )}
+        </div>
 
-        <h3>Environment:</h3>
-        <ul>
-          <li>Chain: Base Sepolia (84532)</li>
-          <li>Porto version: 0.2.23</li>
-          <li>Wagmi version: 2.17.5</li>
-          <li>Viem version: 2.37.9</li>
-        </ul>
+        <div style={{
+          padding: '20px',
+          backgroundColor: '#111',
+          borderRadius: '4px',
+          border: '1px solid #222',
+          fontSize: '14px'
+        }}>
+          <h3 style={{ color: '#fff', marginBottom: '12px', fontSize: '16px' }}>Expected Behavior</h3>
+          <p style={{ marginBottom: '20px', color: '#999', lineHeight: '1.5' }}>
+            After signing, should return a hex signature string.
+          </p>
+
+          <h3 style={{ color: '#f00', marginBottom: '12px', fontSize: '16px' }}>Actual Behavior (Bug)</h3>
+          <p style={{ marginBottom: '10px', color: '#999' }}>
+            Signature returns undefined even though:
+          </p>
+          <ul style={{ marginBottom: '20px', lineHeight: '1.6', paddingLeft: '20px', color: '#999' }}>
+            <li>Porto UI appears correctly</li>
+            <li>User completes passkey authentication</li>
+            <li>Porto UI shows success</li>
+            <li>No errors are thrown</li>
+            <li style={{ color: '#f00' }}>Promise resolves with undefined</li>
+          </ul>
+
+          <h3 style={{ color: '#fff', marginBottom: '12px', fontSize: '16px' }}>Environment</h3>
+          <ul style={{ lineHeight: '1.6', paddingLeft: '20px', marginBottom: 0, color: '#999' }}>
+            <li>Chain: Base Sepolia (84532)</li>
+            <li>Porto: 0.2.23</li>
+            <li>Wagmi: 2.17.5</li>
+            <li>Viem: 2.37.9</li>
+          </ul>
+        </div>
       </div>
     </div>
   )
