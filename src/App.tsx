@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { config } from './wagmi-config'
 import { SiweMessage } from 'siwe'
 import { useState } from 'react'
+import { getAddress } from 'viem'
 
 const queryClient = new QueryClient()
 
@@ -44,9 +45,13 @@ function PortoSigningTest() {
 
     try {
       addLog('📝 Creating SIWE message...')
+
+      // Convert to EIP-55 checksum format
+      const checksumAddress = getAddress(account.address)
+
       const message = new SiweMessage({
         domain: window.location.host,
-        address: account.address,
+        address: checksumAddress,
         statement: 'Sign in to test Porto signing',
         uri: window.location.origin,
         version: '1',
